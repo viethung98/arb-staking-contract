@@ -19,10 +19,14 @@ contract Stake is Ownable {
 		token = IERC20(_token);
 	}
 
+	function balance() public view returns (uint256) {
+        return token.balanceOf(address(this));
+    }
+
 	function stake(uint _amount) public {
 		require(
 			_amount > 0,
-			"USDT amount is not valid"
+			"amount is not valid"
 		);
 
 		token.transferFrom(_msgSender(), address(this), _amount);
