@@ -9,7 +9,7 @@ contract Claim is Ownable {
 	using SafeERC20 for IERC20;
 
 	event TokenStaked(address indexed _wallet, uint256 _amount, uint256 _time);
-	event TokenClaimed(address indexed _wallet, uint256 _amount, uint256 _time);
+	event TokenClaimed(address indexed _wallet, uint256 _amount, bytes signature, uint256 _time);
 
 	IERC20 public token;
     address public signer;
@@ -28,10 +28,9 @@ contract Claim is Ownable {
         string memory _txId,
         address _to,
         uint256 _amount,
-        string memory _message,
-        uint256 _nonce
+        string memory _message
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_txId,_to, _amount, _message, _nonce));
+        return keccak256(abi.encodePacked(_txId,_to, _amount, _message));
     }
 
     function getEthSignedMessageHash(bytes32 _messageHash)
@@ -50,10 +49,9 @@ contract Claim is Ownable {
         address _to,
         uint256 _amount,
         string memory _message,
-        uint256 _nonce,
         bytes memory signature
     ) public pure returns (bool) {
-        bytes32 messageHash = getMessageHash(_txId, _to, _amount, _message, _nonce);
+        bytes32 messageHash = getMessageHash(_txId, _to, _amount, _message);
         bytes32 ethSignedMessageHash = getEthSignedMessageHash(messageHash);
         return recoverSigner(ethSignedMessageHash, signature) == _signer;
     }
@@ -101,11 +99,6 @@ contract Claim is Ownable {
     function claimToken(address _to) external onlyOwner {
 		uint256 balance = token.balanceOf(address(this));
 		token.safeTransfer(_to, balance);
-		emit TokenClaimed(
-			_to,
-			balance,
-			block.timestamp
-		);
 	}
 
 	function claimReward(
@@ -113,7 +106,6 @@ contract Claim is Ownable {
         address _to,
         uint256 _amount,
         string memory _message,
-        uint256 _nonce,
         bytes memory signature
     ) public {
         require(
@@ -122,7 +114,7 @@ contract Claim is Ownable {
         );
 
         require(
-            verify(signer, _txId, _to, _amount, _message, _nonce, signature),
+            verify(signer, _txId, _to, _amount, _message, signature),
             "invalid signature"
         );
 		uint256 _balance = token.balanceOf(address(this));
@@ -132,7 +124,8 @@ contract Claim is Ownable {
 		token.safeTransfer(_to, _amount);
 		emit TokenClaimed(
 			_to,
-			_balance,
+			_amount,
+            signature,
 			block.timestamp
 		);
 	}

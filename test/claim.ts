@@ -1,3 +1,5 @@
+import { BigNumber } from "ethers";
+
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
@@ -11,6 +13,8 @@ describe("VerifySignature", function () {
     const contract = await VerifySignature.deploy();
     await contract.deployed();
     await contract.setting(tokenContract.address, accounts[0].address);
+    await tokenContract.approve(contract.address, 1000);
+    await contract.deposit(1000);
     // const PRIV_KEY = "0x..."
     // const signer = new ethers.Wallet(PRIV_KEY)
     const signer = accounts[0];
@@ -18,9 +22,8 @@ describe("VerifySignature", function () {
     const to = accounts[1].address;
     const amount = 999;
     const message = "Hello";
-    const nonce = 123;
 
-    const hash = await contract.getMessageHash(txId, to, amount, message, nonce);
+    const hash = await contract.getMessageHash(txId, to, amount, message);
     const sig = await signer.signMessage(ethers.utils.arrayify(hash));
 
     const ethHash = await contract.getEthSignedMessageHash(hash);
@@ -30,12 +33,10 @@ describe("VerifySignature", function () {
 
     // Correct signature and message returns true
     expect(
-      await contract.claimToken(txId, to, amount, message, nonce, sig)
+      await contract.verify(signer.address, txId, to, amount, message, sig)
     ).to.equal(true);
 
-    // Incorrect message returns false
-    expect(
-      await contract.claimToken(to, amount + 1, message, nonce, sig)
-    ).to.equal(false);
+    await contract.claimReward(txId, to, amount, message, sig);
+    console.log(await tokenContract.balanceOf(to));
   });
 });

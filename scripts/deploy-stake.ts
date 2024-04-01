@@ -7,7 +7,7 @@ async function main() {
   const Stake = await ethers.getContractFactory("Stake");
   const contract = await Stake.deploy();
   console.log("Stake deployed to:", contract.address);
-  const token = "0x80680fDD7246DF76CD4c166769E8a38cD6684A50";
+  const token = "0x3cec5c4c0374d4cc7d086299234fffe542f5dd11";
   await contract.setting(token);
 }
 

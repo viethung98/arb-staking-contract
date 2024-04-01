@@ -7,10 +7,10 @@ async function main() {
   const Stake = await ethers.getContractFactory("Claim");
   const contract = await Stake.deploy();
   console.log("Claim deployed to:", contract.address);
-  const token = "0x80680fDD7246DF76CD4c166769E8a38cD6684A50";
+  const token = "0x3cEC5C4c0374D4cC7d086299234ffFe542F5dd11";
   await contract.setting(
-    "0xe472306155b2004d9ee5f74c4f6187c0b5927080",
-    token
+    token,
+    "0xe472306155b2004d9eE5F74c4F6187C0b5927080",
   );
 }
 

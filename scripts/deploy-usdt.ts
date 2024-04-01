@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 async function main() {
   // We get the contract to deploy
   const Token = await ethers.getContractFactory("Token");
-  const contract = await Token.deploy("USDT", "USDT");
+  const contract = await Token.deploy("ARB", "ARB");
   console.log("Token deployed to:", contract.address);
 }
 

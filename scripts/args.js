@@ -1,1 +1,1 @@
-module.exports = ["USDT", "USDT"];
+module.exports = ["ARB", "ARB"];
