@@ -6,14 +6,14 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract USDCoin is ERC20, ERC20Burnable, ERC20Pausable, AccessControl {
+contract RKA is ERC20, ERC20Burnable, ERC20Pausable, AccessControl {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor() ERC20("USD Coin", "USDC") {
+    constructor() ERC20("RKA", "RKA") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
-        _mint(msg.sender, 100000000 * 10 ** decimals());
+        _mint(msg.sender, 10000000000 * 10 ** decimals());
         _grantRole(MINTER_ROLE, msg.sender);
     }
 
